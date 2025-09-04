@@ -10,21 +10,22 @@ import csv                      #CSVファイルを扱えるようにするた�
 #各関数へ仕事を割り振るメイン処理
 def function_main(text_data):
     file_path=r"document.txt" 
-    sumcount_a=0    #文章すべの文字数の合計を格納する変数
+    sumcount_a=0                                #文章すべの文字数の合計を格納する変数
     all_error_count=0                           #全体のエラーのカウントする変数
-    function_file_reset(file_path)             #document.txtの中身を初期化する関数へ
-    sentences=function_list(text_data)         #文章をリスト化する関数へ
+    function_file_reset(file_path)              #document.txtの中身を初期化する関数へ
+    sentences=function_list(text_data)          #文章をリスト化する関数へ
+    
     for document_str in sentences:              #1文ごとにfor文を回す。
         str_count=0                             #1文の長さをカウントする変数
         setsuzoku_count_a=0                     #接続詞の誤りをカウントする変数
         #文章をチェックする処理
-        str_count=check_str_count(document_str)     #文字列の長さをカウントする
-        sumcount_a+=str_count                       #取得した1文の長さを加算する
+        str_count=check_str_count(document_str)             #文字列の長さをカウントする
+        sumcount_a+=str_count                               #取得した1文の長さを加算する
         setsuzoku_count_a=check_setsuzokusi(document_str)   #接続詞に誤りがないかカウントする
         
         #document.txtへの書き込み処理
-        write_document(document_str,file_path)     #1文をdocument.txtに書き込む
-        write_str_count(str_count,file_path)       #1文の文字数をdocument.txtに書き込む
+        write_document(document_str,file_path)   #1文をdocument.txtに書き込む
+        write_str_count(str_count,file_path)     #1文の文字数をdocument.txtに書き込む
 
         #警告文の種類を判別する処理
         if str_count>=120:
@@ -35,7 +36,7 @@ def function_main(text_data):
             caveat=2       #告文の種類を判別する変数 2=誤った接続詞に関するエラー
             write_caveat(caveat,file_path)
             all_error_count+=1
-        write_line(file_path)   #1文ごとに区切る線を書く関数へ
+        write_line(file_path)                     #1文ごとに区切る線を書く関数へ
     messagebox. showinfo("infomation",f"読み込みが完了しました。\nエラー数{all_error_count} ")
 
 #document, txtファイルの中身を初期化する関数
@@ -45,8 +46,8 @@ def function_file_reset(filepath_a):
 
 #文章をリスト化する関数
 def function_list (textdata):
-    sentences=re. split (r"(?<=[。】＞])",textdata)              #[。】＞]で文章を区切る
-    sentences=[s. strip() for s in sentences if s. strip()]     #空白を削除する
+    sentences=re.split (r"(?<=[。】＞])",textdata)              #[。】＞]で文章を区切る
+    sentences=[s.strip() for s in sentences if s. strip()]     #空白を削除する
     return sentences
 
 #1文の文字数をカウントする関数
