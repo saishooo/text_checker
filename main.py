@@ -5,9 +5,11 @@ import tkinter as tk            #tkinterの宣言
 from tkinter import messagebox  #メッセージボックスの表示に必要
 import csv                      #CSVファイルを扱えるようにするために必要
 
+senmonyougo_checklist_log=list()
+
 #各関数へ仕事を割り振るメイン処理
 def function_main(text_data):
-    file_path=r"document.txt" 
+    file_path=r"document.txt"                   #あとでグローバル変数にする
     sumcount_a=0                                #文章すべの文字数の合計を格納する変数
     all_error_count=0                           #全体のエラーのカウントする変数
     function_file_reset(file_path)              #document.txtの中身を初期化する関数へ
@@ -38,8 +40,9 @@ def function_main(text_data):
             write_caveat(caveat,file_path)
             all_error_count+=1
         if senmonyougo_count!=0:
-            caveat=3
+            caveat=3        #告文の種類を判別する変数 3=専門用語を指摘する
             write_caveat(caveat,file_path)
+            all_error_count+=1
         write_line(file_path)                     #1文ごとに区切る線を書く関数へ
     messagebox. showinfo("infomation",f"読み込みが完了しました。\nエラー数{all_error_count} ")
 
@@ -62,24 +65,26 @@ def check_str_count (document_a):
 
 #⚫︎専門用語をカウントする関数
 def check_senmonyougo(document_a):
-    csv_file_path=r"senmonyougo_check.csv"
+    csv_file_path=r"senmonyougo_check.csv"  #あとでグローバル変数にする
     check_count=0               #専門用語の数をカウントする変数
 
     with open(csv_file_path,"r",encoding="utf-8") as csv_file:
         senmonyougo_data_read=csv.reader(csv_file)
         senmonyougo_rows=list(senmonyougo_data_read)
         senmonyougo_rows_count=len(senmonyougo_rows[0])
+
         for count in range (senmonyougo_rows_count):        #csvファイルに書かれている要素数だけ実行する
             senmonyougo_checklist=str(senmonyougo_rows[0][count])
             if senmonyougo_checklist in document_a:
+                senmonyougo_checklist_log.append(senmonyougo_checklist)
                 check_count+=1
     return check_count
 
 #⚫︎1文の接続詞の誤りをカウントする関数
 def check_setsuzokusi(document_a):
-    csv_file_path=r"setsuzokusi_check.csv"
+    csv_file_path=r"setsuzokusi_check.csv"  #あとでグローバル変数にする
     check_count=0               #誤った接続詞をカウントする変数
-    
+
     with open(csv_file_path,"r",encoding="utf-8") as csv_file:
         setsuzoku_data_read=csv.reader(csv_file)
         setsuzoku_rows=list(setsuzoku_data_read)        #csvファイルのデータをsetsuzoku_datareadに格納する
@@ -87,6 +92,7 @@ def check_setsuzokusi(document_a):
         for count in range (setsuzoku_rows_count):      #csvファイルに書かれている要素数だけ実行する
             setsuzoku_checklist=str(setsuzoku_rows[0][count])
             if setsuzoku_checklist in document_a:
+                #何文字目なのかを指摘する処理を追加する
                 check_count+=1
     return check_count
 
@@ -109,6 +115,10 @@ def write_caveat(caveat_juge,filepath_a) :
             file.write("●E-2：接続詞が誤っています\n")
         elif caveat_juge==3:
             file.write("●E-3：専門用語が書かれています\n")
+            error_senmonyougo_cnt=len(senmonyougo_checklist_log)
+            for count in range (error_senmonyougo_cnt):
+                file.write(f"・{senmonyougo_checklist_log[count]}\n")
+            #ここにグローバル変数の専門用語を吐き出す処理を追加する。
 
 #⚫︎ラインをdocument.txtファイルに書き込む関数
 def write_line(filepath_a): 
