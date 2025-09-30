@@ -31,12 +31,15 @@ def function_main(text_data):
         #文章をチェックする処理
         str_count=check_str_count(document_str)             #文字列の長さをカウントする
         sumcount_a+=str_count                               #取得した1文の長さを加算する
-        setsuzoku_count=check_setsuzokusi(document_str)     #接続詞に誤りがないかカウントする
-        senmonyougo_count=check_senmonyougo(document_str)   #専門用語がないか確認する
+        #setsuzoku_count=check_setsuzokusi(document_str)     #接続詞に誤りがないかカウントする
+
+        setsuzoku_count=check_readcsv(document_str,1)
+        senmonyougo_count=check_readcsv(document_str,2)
+        #senmonyougo_count=check_senmonyougo(document_str)   #専門用語がないか確認する
         
         #document.txtへの書き込み処理
         write_document(document_str,document_file_path)   #1文をdocument.txtに書き込む
-        write_line(document_file_path)                     #1文ごとに区切る線を書く関数へ
+        write_line(document_file_path)                    #1文ごとに区切る線を書く関数へ
         write_str_count(str_count,document_file_path)     #1文の文字数をdocument.txtに書き込む
 
         #警告文の種類を判別する処理
@@ -62,17 +65,50 @@ def function_file_reset(filepath_a):
         txt_file.truncate(0)
 
 #⚫︎文章をリスト化する関数
-def function_list (textdata):
+def function_list(textdata):
     sentences=re.split (r"(?<=[。】＞])",textdata)              #[。】＞]で文章を区切る
     sentences=[s.strip() for s in sentences if s. strip()]     #空白を削除する
     return sentences
 
 #⚫︎1文の文字数をカウントする関数
-def check_str_count (document_a):
+def check_str_count(document_a):
     Str_count=0                 #一文の長さをカウントする変数
     Str_count=len(document_a)   #document_aの長さを取得する
     return Str_count
 
+def check_readcsv(document_a,pattern):
+    check_count=0
+    global setsuzokusi_checklist_log
+    global senmonyougo_checklist_log
+
+    setsuzokusi_checklist_log.clear()
+    senmonyougo_checklist_log.clear()
+
+    checked_list_log=list()
+    checked_list_log.clear()
+
+    if pattern==1:
+        file_path=setsuzokusi_file_path
+    elif pattern==2:
+        file_path=senmonyougo_file_path
+    
+    with open(file_path,"r",encoding="utf-8") as csv_file:
+        data_read=csv.reader(csv_file)
+        rows=list(data_read)
+        rows_count=len(rows[0])
+        for count in range(rows_count):
+            checklist=str(rows[0][count])
+            if checklist in document_a:
+                checked_list_log.append(checklist)
+                check_count+=1
+
+    if pattern==1:
+        setsuzokusi_checklist_log=checked_list_log
+    elif pattern==2:
+        senmonyougo_checklist_log=checked_list_log
+    
+    return check_count
+"""
 #⚫︎専門用語をカウントする関数
 def check_senmonyougo(document_a):
     check_count=0               #専門用語の数をカウントする変数
@@ -105,7 +141,7 @@ def check_setsuzokusi(document_a):
                 setsuzokusi_checklist_log.append(setsuzoku_checklist)
                 check_count+=1
     return check_count
-
+"""
 #⚫︎1文をdocument.txtファイルに書き込む関数
 def write_document(document_a,filepath_a):
     with open(filepath_a,"a",encoding="utf-8") as file:
