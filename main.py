@@ -43,7 +43,6 @@ def function_main(text_data):
         write_function.write_line(config.document_file_path)                     #1文ごとに区切る線を書く関数へ
     messagebox. showinfo("infomation",f"読み込みが完了しました。\nエラー数{all_error_count} ")
 
-#-------------------------------function-----------------------------------------------------------------
 #⚫︎document, txtファイルの中身を初期化する関数
 def function_file_reset(filepath_a):
     with open(filepath_a,"a",encoding="utf-8") as txt_file:

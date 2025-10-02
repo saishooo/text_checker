@@ -27,7 +27,7 @@ def write_str_long(length,filepath):
     count=0
     if length>=120:
         with open (filepath,"a",encoding="utf-8") as file:
-            file.write("●E-1：一文が120字以上です\n")
+            file.write("●warning-1：一文が120字以上です\n")
             count+=1
             return count
     else:
