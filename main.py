@@ -15,6 +15,7 @@ setsuzokusi_file_path=r"setsuzokusi_check.csv"
 senmonyougo_checklist_log=list()
 setsuzokusi_checklist_log=list()
 
+#listに入っている変数の中身を参照するよ！
 filelistdata=[
     [senmonyougo_file_path, senmonyougo_checklist_log, "●E-3：専門用語が書かれています"],
     [setsuzokusi_file_path, setsuzokusi_checklist_log, "●E-2：接続詞が誤っています"]
@@ -42,17 +43,10 @@ def function_main(text_data):
         senmonyougo_checklist_log.clear()
         setsuzokusi_checklist_log.clear()
 
-        dumy=0
-
         #文章をチェックする処理
         str_count=check_str_count(document_str)             #文字列の長さをカウントする
         sumcount_a+=str_count                               #取得した1文の長さを加算する
 
-        senmonyougo_count,dumy=check_readcsv(document_str,filelistdata[0][0])     #専門用語がないか確認する
-        senmonyougo_checklist_log=dumy
-        setsuzokusi_count,dumy=check_readcsv(document_str,filelistdata[1][0])     #接続詞に誤りがないかカウントする
-        setsuzokusi_checklist_log=dumy
-        
         #document.txtへの書き込み処理
         write_document(document_str,document_file_path)   #1文をdocument.txtに書き込む
         write_line(document_file_path)                    #1文ごとに区切る線を書く関数へ
@@ -60,8 +54,10 @@ def function_main(text_data):
 
         str_length_error=write_str_long(str_count,document_file_path)
         all_error_count+=str_length_error
-       
 
+        senmonyougo_count,senmonyougo_checklist_log=check_readcsv(document_str,filelistdata[0][0])     #専門用語がないか確認する
+        setsuzokusi_count,setsuzokusi_checklist_log=check_readcsv(document_str,filelistdata[1][0])     #接続詞に誤りがないかカウントする
+       
         write_csv_error(senmonyougo_checklist_log,filelistdata[0][2])
         write_csv_error(setsuzokusi_checklist_log,filelistdata[1][2])
         all_error_count+=(senmonyougo_count+setsuzokusi_count)
