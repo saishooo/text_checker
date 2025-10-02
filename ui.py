@@ -1,3 +1,4 @@
+#UIの表示を行う
 import tkinter as tk            #インターフェイス
 from main import function_main
 
